@@ -1,25 +1,20 @@
 class Timer {
-	constructor(durationInput, startBtn, pauseBtn, callBacks) {
-		if (typeof durationInput === "string") {
-			this.duration = durationInput
-		} else {
-			this.durationInput = durationInput
-			this.durationInput.addEventListener("change", this.reset())
+	constructor(durationInput, startButton, pauseButton, callbacks) {
+		this.durationInput = durationInput
+		this.startButton = startButton
+		this.pauseButton = pauseButton
+		this.inProgress = false
+		if (callbacks) {
+			this.onStart = callbacks.onStart
+			this.onTick = callbacks.onTick
+			this.onComplete = callbacks.onComplete
 		}
-		if (startBtn && pauseBtn) {
-			this.startBtn = startBtn
-			this.pauseBtn = pauseBtn
-			this.startBtn.addEventListener("click", this.start)
-			this.pauseBtn.addEventListener("click", this.pause)
-		}
-		if (callBacks) {
-			this.onStart = callBacks.onStart
-			this.onTick = callBacks.onTick
-			this.onPause = callBacks.onPause
-			this.onComplete = callBacks.onComplete
-		}
-		this.reset()
+
+		this.startButton.addEventListener("click", this.start)
+		this.pauseButton.addEventListener("click", this.pause)
+		this.durationInput.addEventListener("keyup", this.reset)
 	}
+
 	start = () => {
 		if (this.onStart && !this.inProgress) {
 			this.onStart(this.timeRemaining)
@@ -31,17 +26,20 @@ class Timer {
 
 	pause = () => {
 		clearInterval(this.interval)
-		this.timeRemaining = this.timeRemaining
 	}
 
 	tick = () => {
 		if (this.timeRemaining <= 0) {
 			this.reset()
 			this.pause()
-			this.onComplete()
+			if (this.onComplete) {
+				this.onComplete()
+			}
 		} else {
 			this.timeRemaining = this.timeRemaining - 0.02
-			this.onTick(this.timeRemaining)
+			if (this.onTick) {
+				this.onTick(this.timeRemaining)
+			}
 		}
 	}
 

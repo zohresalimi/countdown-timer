@@ -5,15 +5,15 @@ const circle = document.querySelector("circle")
 const perimeter = circle.getAttribute("r") * 2 * Math.PI
 
 circle.setAttribute("stroke-dasharray", perimeter)
-let totalDuration = durationInput.value
+let totalDuration
 const timer = new Timer(durationInput, startBtn, pauseBtn, {
-	onStart(duration) {
-		totalDuration = totalDuration || duration
+	onStart(timeRemaining) {
+		totalDuration = timeRemaining
 	},
 	onTick(timeRemaining) {
 		circle.setAttribute(
 			"stroke-dashoffset",
-			(perimeter * timeRemaining) / totalDuration - perimeter
+			perimeter * (timeRemaining / totalDuration) - perimeter
 		)
 	},
 	onPause() {
